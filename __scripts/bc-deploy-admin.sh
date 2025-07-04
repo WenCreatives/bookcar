@@ -1,34 +1,34 @@
 #!/bin/bash
 
 start_time=$(date +%s)
-echo "Deploying BookCars admin panel..."
+echo "Deploying bookcar admin panel..."
 
-cd /root/bookcars
+cd /root/bookcar
 git pull
-sudo chmod +x -R /root/bookcars/__scripts
+sudo chmod +x -R /root/bookcar/__scripts
 
-/bin/bash /root/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcar/__scripts/free-mem.sh
 
-cd /root/bookcars/admin
+cd /root/bookcar/admin
 sudo rm -rf build
 
 npm install --force
 npm run build
 
-sudo rm -rf /var/www/bookcars/admin
-sudo mkdir -p /var/www/bookcars/admin
-sudo cp -rf build/* /var/www/bookcars/admin
+sudo rm -rf /var/www/bookcar/admin
+sudo mkdir -p /var/www/bookcar/admin
+sudo cp -rf build/* /var/www/bookcar/admin
 
 sudo rm -rf /var/cache/nginx
 sudo systemctl restart nginx
 sudo systemctl status nginx --no-pager
 
-/bin/bash /root/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcar/__scripts/free-mem.sh
 
 finish_time=$(date +%s)
 elapsed_time=$((finish_time - start_time))
 ((sec=elapsed_time%60, elapsed_time/=60, min=elapsed_time%60))
-timestamp=$(printf "BookCars admin panel deployed in %d minutes and %d seconds." $min $sec)
+timestamp=$(printf "bookcar admin panel deployed in %d minutes and %d seconds." $min $sec)
 echo "$timestamp"
 
 #$SHELL

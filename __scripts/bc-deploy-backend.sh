@@ -1,27 +1,27 @@
 #!/bin/bash
 
 start_time=$(date +%s)
-echo "Deploying BookCars backend..."
+echo "Deploying bookcar backend..."
 
-cd /root/bookcars
+cd /root/bookcar
 git pull
-chmod +x -R /root/bookcars/__scripts
+chmod +x -R /root/bookcar/__scripts
 
-/bin/bash /root/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcar/__scripts/free-mem.sh
 
-cd /root/bookcars/backend
+cd /root/bookcar/backend
 
 npm install
 
-sudo systemctl restart bookcars
-sudo systemctl status bookcars --no-pager
+sudo systemctl restart bookcar
+sudo systemctl status bookcar --no-pager
 
-/bin/bash /root/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcar/__scripts/free-mem.sh
 
 finish_time=$(date +%s)
 elapsed_time=$((finish_time - start_time))
 ((sec=elapsed_time%60, elapsed_time/=60, min=elapsed_time%60))
-timestamp=$(printf "BookCars backend deployed in %d minutes and %d seconds." $min $sec)
+timestamp=$(printf "bookcar backend deployed in %d minutes and %d seconds." $min $sec)
 echo "$timestamp"
 
 #$SHEL

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-tail -f /root/bookcars/backend/logs/all.log
+tail -f /root/bookcar/backend/logs/all.log
