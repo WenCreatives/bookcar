@@ -21,7 +21,7 @@ brew install watchman
 
 # 5. install ruby@3.1 and cocoapods
 brew install ruby@3.1
-echo 'export PATH="/usr/local/opt/ruby@3.1/bin:$PATH"' >> ~/.zshrc # on mac intel: /usr/local/opt, on mac M1, M2, M3: /opt/homebrew/opt
+echo 'export PATH="/usr/local/root/ruby@3.1/bin:$PATH"' >> ~/.zshrc # on mac intel: /usr/local/opt, on mac M1, M2, M3: /root/homebrew/opt
 source ~/.zshrc
 sudo gem install cocoapods
 echo 'export PATH="/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"' >> ~/.zshrc # check /usr/local/lib/ruby/gems/3.1.0/bin

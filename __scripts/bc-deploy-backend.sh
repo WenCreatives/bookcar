@@ -3,20 +3,20 @@
 start_time=$(date +%s)
 echo "Deploying BookCars backend..."
 
-cd /opt/bookcars
+cd /root/bookcars
 git pull
-chmod +x -R /opt/bookcars/__scripts
+chmod +x -R /root/bookcars/__scripts
 
-/bin/bash /opt/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcars/__scripts/free-mem.sh
 
-cd /opt/bookcars/backend
+cd /root/bookcars/backend
 
 npm install
 
 sudo systemctl restart bookcars
 sudo systemctl status bookcars --no-pager
 
-/bin/bash /opt/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcars/__scripts/free-mem.sh
 
 finish_time=$(date +%s)
 elapsed_time=$((finish_time - start_time))

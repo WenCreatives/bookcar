@@ -3,13 +3,13 @@
 start_time=$(date +%s)
 echo "Deploying BookCars admin panel..."
 
-cd /opt/bookcars
+cd /root/bookcars
 git pull
-sudo chmod +x -R /opt/bookcars/__scripts
+sudo chmod +x -R /root/bookcars/__scripts
 
-/bin/bash /opt/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcars/__scripts/free-mem.sh
 
-cd /opt/bookcars/admin
+cd /root/bookcars/admin
 sudo rm -rf build
 
 npm install --force
@@ -23,7 +23,7 @@ sudo rm -rf /var/cache/nginx
 sudo systemctl restart nginx
 sudo systemctl status nginx --no-pager
 
-/bin/bash /opt/bookcars/__scripts/free-mem.sh
+/bin/bash /root/bookcars/__scripts/free-mem.sh
 
 finish_time=$(date +%s)
 elapsed_time=$((finish_time - start_time))
