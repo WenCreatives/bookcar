@@ -47,7 +47,12 @@ const SignUp = () => {
 
   const onSubmit = async (data: FormFields) => {
     try {
-      // Skip email validation for now - go directly to signup
+      const emailStatus = await UserService.validateEmail({ email: data.email })
+      if (emailStatus !== 200) {
+        setError('email', { message: commonStrings.EMAIL_ALREADY_REGISTERED })
+        return
+      }
+
       let recaptchaToken = ''
       if (reCaptchaLoaded) {
         recaptchaToken = await generateReCaptchaToken()

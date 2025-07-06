@@ -10,17 +10,7 @@ const LANGUAGES = [
     code: 'en',
     countryCode: 'ke',
     label: 'English',
-  },
-  {
-    code: 'fr',
-    countryCode: 'fr',
-    label: 'Français',
-  },
-  {
-    code: 'es',
-    countryCode: 'es',
-    label: 'Español',
-  },
+  }
 ]
 
 //

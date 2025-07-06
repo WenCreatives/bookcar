@@ -53,7 +53,7 @@ const _signup = async (req: Request, res: Response, userType: bookcarsTypes.User
   try {
     body.email = helper.trim(body.email, ' ')
     body.active = true
-    body.verified = true // Set to true to skip email verification for now
+    body.verified = false
     body.blacklisted = false
     body.type = userType
 
@@ -75,16 +75,54 @@ const _signup = async (req: Request, res: Response, userType: bookcarsTypes.User
         await user.save()
       }
     }
-
-    // Skip email sending for now - user is already activated
-    console.log('User created and activated successfully:', user.email)
-    res.sendStatus(200)
-    return
-
   } catch (err) {
     logger.error(`[user.signup] ${i18n.t('DB_ERROR')} ${JSON.stringify(body)}`, err)
     res.status(400).send(i18n.t('DB_ERROR') + err)
     return
+  }
+
+  //
+  // Send confirmation email
+  //
+  try {
+    // generate token and save
+    const token = new Token({ user: user._id, token: helper.generateToken() })
+
+    await token.save()
+
+    // Send email
+    i18n.locale = user.language
+
+    const activationLink = `http${env.HTTPS ? 's' : ''}://${req.headers.host}/api/confirm-email/${user.email}/${token.token}`
+
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: env.SMTP_FROM,
+      to: user.email,
+      subject: i18n.t('ACCOUNT_ACTIVATION_SUBJECT'),
+      html:
+        `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+          <p style="font-size: 16px; color: #555;">
+            ${i18n.t('HELLO')} ${user.fullName},<br><br>
+            ${i18n.t('ACCOUNT_ACTIVATION_LINK')}<br><br>
+            <a href="${activationLink}" target="_blank">${activationLink}</a><br><br>
+            ${i18n.t('REGARDS')}<br>
+          </p>
+        </div>`,
+    }
+    await mailHelper.sendMail(mailOptions)
+    res.sendStatus(200)
+  } catch (err) {
+    try {
+      //
+      // Delete user in case of smtp failure
+      //
+      await Token.deleteMany({ user: user.id })
+      await user.deleteOne()
+    } catch (deleteErr) {
+      logger.error(`[user.signup] ${i18n.t('DB_ERROR')} ${JSON.stringify(body)}`, deleteErr)
+    }
+    logger.error(`[user.signup] ${i18n.t('SMTP_ERROR')}`, err)
+    res.status(400).send(i18n.t('SMTP_ERROR') + err)
   }
 }
 
@@ -560,7 +598,7 @@ export const socialSignin = async (req: Request, res: Response) => {
         throw new Error('body.accessToken not found')
       }
 
-      if (!(await helper.validateAccessToken(socialSignInType, accessToken, email))) {
+      if (!(await authHelper.validateAccessToken(socialSignInType, accessToken, email))) {
         throw new Error('body.accessToken is not valid')
       }
     }
@@ -1586,77 +1624,19 @@ export const sendEmail = async (req: Request, res: Response) => {
     const { body }: { body: bookcarsTypes.SendEmailPayload } = req
     const { from, to, subject, message, isContactForm } = body
 
-    // Log the contact form submission for development
-    console.log('Contact form submission received:')
-    console.log('From:', from)
-    console.log('To:', to)
-    console.log('Subject:', subject)
-    console.log('Message:', message)
-    console.log('Is Contact Form:', isContactForm)
-
-    // Create notification for admin users when contact form is submitted
-    if (isContactForm) {
-      try {
-        // Find all admin users
-        const adminUsers = await User.find({ 
-          type: { $in: [bookcarsTypes.UserType.Admin, bookcarsTypes.UserType.Supplier] },
-          active: true 
-        })
-
-        const notificationMessage = `New contact form message from ${from}: ${subject}`
-
-        // Create notifications for all admin users
-        for (const admin of adminUsers) {
-          // Create notification
-          const notification = new Notification({
-            user: admin._id,
-            message: notificationMessage,
-          })
-          await notification.save()
-
-          // Update notification counter
-          let counter = await NotificationCounter.findOne({ user: admin._id })
-          if (counter && typeof counter.count !== 'undefined') {
-            counter.count += 1
-            await counter.save()
-          } else {
-            counter = new NotificationCounter({ user: admin._id, count: 1 })
-            await counter.save()
-          }
-
-          console.log(`Notification created for admin user: ${admin.email}`)
-        }
-
-        console.log(`Contact form notification sent to ${adminUsers.length} admin(s)`)
-      } catch (notificationError) {
-        console.error('Failed to create admin notifications:', notificationError)
-        logger.error(`[user.sendEmail] Failed to create admin notifications: ${notificationError}`)
-      }
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: env.SMTP_FROM,
+      to,
+      subject: isContactForm ? i18n.t('CONTACT_SUBJECT') : subject,
+      html:
+        `<p>
+              ${i18n.t('FROM')}: ${from}<br>
+              ${(isContactForm && `${i18n.t('SUBJECT')}: ${subject}<br>`) || ''}
+              ${(message && `${i18n.t('MESSAGE')}:<br>${message.replace(/(?:\r\n|\r|\n)/g, '<br>')}<br>`) || ''}
+         </p>`,
     }
+    await mailHelper.sendMail(mailOptions)
 
-    // For development, skip actual email sending and just return success
-    // In production, you would configure proper SMTP settings and enable email sending
-    try {
-      const mailOptions: nodemailer.SendMailOptions = {
-        from: env.SMTP_FROM,
-        to,
-        subject: isContactForm ? i18n.t('CONTACT_SUBJECT') : subject,
-        html:
-          `<p>
-                ${i18n.t('FROM')}: ${from}<br>
-                ${(isContactForm && `${i18n.t('SUBJECT')}: ${subject}<br>`) || ''}
-                ${(message && `${i18n.t('MESSAGE')}:<br>${message.replace(/(?:\r\n|\r|\n)/g, '<br>')}<br>`) || ''}
-           </p>`,
-      }
-      await mailHelper.sendMail(mailOptions)
-      console.log('Email sent successfully')
-    } catch (emailError) {
-      // Log the email error but don't fail the request
-      console.log('Email sending failed (this is expected in development):', emailError)
-      logger.error(`[user.sendEmail] Email sending failed: ${emailError}`)
-    }
-
-    // Always return success for development
     res.sendStatus(200)
   } catch (err) {
     logger.error(`[user.sendEmail] ${JSON.stringify(req.body)}`, err)

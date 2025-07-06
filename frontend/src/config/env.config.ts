@@ -14,17 +14,7 @@ const LANGUAGES: Language[] = [
     code: 'en',
     countryCode: 'ke',
     label: 'English',
-  },
-  {
-    code: 'fr',
-    countryCode: 'fr',
-    label: 'Français',
-  },
-  {
-    code: 'es',
-    countryCode: 'es',
-    label: 'Español',
-  },
+  }
 ]
 
 type Currency = { code: string, symbol: string }
