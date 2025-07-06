@@ -236,6 +236,13 @@ export const SMTP_PASS = __env__('BC_SMTP_PASS', true)
 export const SMTP_FROM = __env__('BC_SMTP_FROM', true)
 
 /**
+ * SENDGRID api key
+ * 
+ * @type {string}
+ */
+export const SENDGRID_API_KEY = __env__('BC_SENDGRID_API_KEY', true)
+
+/**
  * CDN root folder path.
  *
  * @type {string}
