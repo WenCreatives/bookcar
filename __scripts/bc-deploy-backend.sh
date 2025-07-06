@@ -13,8 +13,8 @@ cd /root/bookcar/backend
 
 npm install
 
-sudo systemctl restart bookcar
-sudo systemctl status bookcar --no-pager
+sudo systemctl restart bookcar-backend.service
+sudo systemctl status bookcar-backend.service --no-pager
 
 /bin/bash /root/bookcar/__scripts/free-mem.sh
 
