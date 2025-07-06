@@ -14,5 +14,6 @@ export const sendMail = async (
   mailOptions: nodemailer.SendMailOptions
 ): Promise<nodemailer.SentMessageInfo> => {
   const transporter = await createTransporter()
+  console.log(`Sending email from ${mailOptions.from} to ${mailOptions.to}`)
   return transporter.sendMail(mailOptions)
 }
