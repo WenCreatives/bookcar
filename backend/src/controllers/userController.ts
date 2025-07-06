@@ -93,7 +93,7 @@ const _signup = async (req: Request, res: Response, userType: bookcarsTypes.User
     // Send email
     i18n.locale = user.language
 
-    const activationLink = `http${env.HTTPS ? 's' : ''}://${req.headers.host}/api/confirm-email/${user.email}/${token.token}`
+    const activationLink = `${env.FRONTEND_HOST}/verify-email?e=${user.email}&t=${token.token}`
 
     const mailOptions: nodemailer.SendMailOptions = {
       from: env.SMTP_FROM,

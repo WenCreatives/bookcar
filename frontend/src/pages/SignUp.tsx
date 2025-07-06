@@ -53,18 +53,18 @@ const SignUp = () => {
         return
       }
 
-      let recaptchaToken = ''
-      if (reCaptchaLoaded) {
-        recaptchaToken = await generateReCaptchaToken()
-        if (!(await helper.verifyReCaptcha(recaptchaToken))) {
-          recaptchaToken = ''
-        }
-      }
+      // let recaptchaToken = ''
+      // if (reCaptchaLoaded) {
+      //   recaptchaToken = await generateReCaptchaToken()
+      //   if (!(await helper.verifyReCaptcha(recaptchaToken))) {
+      //     recaptchaToken = ''
+      //   }
+      // }
 
-      if (env.RECAPTCHA_ENABLED && !recaptchaToken) {
-        setRecaptchaError(true)
-        return
-      }
+      // if (env.RECAPTCHA_ENABLED && !recaptchaToken) {
+      //   setRecaptchaError(true)
+      //   return
+      // }
 
       const payload: bookcarsTypes.SignUpPayload = {
         email: data.email,
