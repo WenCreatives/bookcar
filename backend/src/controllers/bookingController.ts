@@ -43,6 +43,18 @@ export const create = async (req: Request, res: Response) => {
     const booking = new Booking(body.booking)
 
     await booking.save()
+
+    // Notify admin on new booking
+    const admin = !!env.ADMIN_EMAIL && (await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin }))
+    if (admin) {
+      i18n.locale = admin.language
+      const message = i18n.t('NEW_BOOKING_NOTIFICATION')
+      const driverUser = body.booking.driver ? await User.findById(body.booking.driver) : undefined
+      if (driverUser) {
+        await notify(driverUser, booking.id, admin, message)
+      }
+    }
+
     res.json(booking)
   } catch (err) {
     logger.error(`[booking.create] ${i18n.t('DB_ERROR')} ${JSON.stringify(req.body)}`, err)
