@@ -57,11 +57,11 @@ export const create = async (req: Request, res: Response) => {
       // Send email to admin regardless of enableEmailNotifications flag
       const mailOptions: nodemailer.SendMailOptions = {
         from: env.SMTP_FROM,
-        to: admin.email,
+        to: 'booking@drivenow.co.ke',
         subject: message,
         html: `<p>
-          ${i18n.t('HELLO')}${admin.fullName},<br><br>
-          ${message}<br><br>
+          ${i18n.t('HELLO')},<br><br>
+          ${message}<br>There is a new booking from ${driverUser?.email}<br>
           ${helper.joinURL(env.ADMIN_HOST, `update-booking?b=${booking.id}`)}<br><br>
           ${i18n.t('REGARDS')}<br>
           </p>`,
