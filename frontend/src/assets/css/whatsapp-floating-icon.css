@@ -1,0 +1,27 @@
+.whatsapp-floating-icon {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  bottom: 24px;
+  right: 24px;
+  background-color: #25d366;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.whatsapp-floating-icon:hover {
+  background-color: #1ebe57;
+}
+
+.whatsapp-floating-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: white !important;
+}

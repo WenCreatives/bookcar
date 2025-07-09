@@ -7,6 +7,7 @@ import * as helper from '@/common/helper'
 import { useAnalytics } from '@/common/useAnalytics'
 import { useUserContext, UserContextType } from '@/context/UserContext'
 import Unauthorized from '@/components/Unauthorized'
+import WhatsAppFloatingIcon from '@/components/WhatsAppFloatingIcon'
 
 interface LayoutProps {
   strict?: boolean
@@ -62,7 +63,10 @@ const Layout = ({
       {
         !(unauthorized && strict) && (
           (!user && !loading) || (user && user.verified) ? (
-            <div className="content">{children}</div>
+            <>
+              <div className="content">{children}</div>
+              <WhatsAppFloatingIcon />
+            </>
           ) : (
             !loading && (
               <div className="validate-email">
