@@ -57,7 +57,7 @@ export const create = async (req: Request, res: Response) => {
       // Send email to admin regardless of enableEmailNotifications flag
       const mailOptions: nodemailer.SendMailOptions = {
         from: env.SMTP_FROM,
-        to: 'booking@drivenow.co.ke',
+        to: 'bigaddict.hb@gmail.com',
         subject: message,
         html: `<p>
           ${i18n.t('HELLO')},<br><br>
