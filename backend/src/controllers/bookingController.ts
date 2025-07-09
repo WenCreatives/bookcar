@@ -53,6 +53,20 @@ export const create = async (req: Request, res: Response) => {
       if (driverUser) {
         await notify(driverUser, booking.id, admin, message)
       }
+
+      // Send email to admin regardless of enableEmailNotifications flag
+      const mailOptions: nodemailer.SendMailOptions = {
+        from: env.SMTP_FROM,
+        to: admin.email,
+        subject: message,
+        html: `<p>
+          ${i18n.t('HELLO')}${admin.fullName},<br><br>
+          ${message}<br><br>
+          ${helper.joinURL(env.ADMIN_HOST, `update-booking?b=${booking.id}`)}<br><br>
+          ${i18n.t('REGARDS')}<br>
+          </p>`,
+      }
+      await mailHelper.sendMail(mailOptions)
     }
 
     res.json(booking)
