@@ -46,6 +46,7 @@ export const create = async (req: Request, res: Response) => {
 
     // Notify admin on new booking
     const admin = !!env.ADMIN_EMAIL && (await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin }))
+    console.log(`Admin: ${admin ? admin.email : 'not found'}`)
     if (admin) {
       i18n.locale = admin.language
       const message = i18n.t('NEW_BOOKING_NOTIFICATION')
